@@ -4,8 +4,4 @@ import App from "./components/App";
 
 
 
-createRoot(document.getElementById('root')).render(
-<BrowserRouter>
-<App />
-</BrowserRouter>
-);
+ReactDOM.render(<App />, document.getElementById("root"));
