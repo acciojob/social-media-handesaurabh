@@ -1,5 +1,5 @@
 import React from 'react';
-import { Link, useNavigate } from 'react-router-dom';
+import { useNavigate } from 'react-router-dom';
 
 function ReactionButtons({ reactions, onReact }) {
   return (
@@ -32,20 +32,16 @@ export default function PostsList({ posts, users, navigate, onUpdatePost }) {
   }
 
   return (
-    <section className="posts-list">
-      <div className="posts-header">All Posts</div>
+    <div className="posts-list">
       {posts.map(post => (
         <article key={post.id} className="post">
           <h2>{post.title}</h2>
           <div className="meta">by {getUserName(post.authorId)}</div>
           <p>{post.content}</p>
           <ReactionButtons reactions={post.reactions} onReact={(i) => handleReact(post.id, i)} />
-          <div className="post-actions">
-            {/* This button must be .button and navigate to /posts/:id */}
-            <button className="button" onClick={() => nav(`/posts/${post.id}`)}>View</button>
-          </div>
+          <button className="button" onClick={() => nav(`/posts/${post.id}`)}>View</button>
         </article>
       ))}
-    </section>
+    </div>
   );
 }
