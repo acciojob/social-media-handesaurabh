@@ -56,7 +56,7 @@ function AppContent() {
     <div className="App">
       <header>
         <h1>GenZ</h1>
-        <div><Nav /></div>
+        <Nav />
       </header>
       <main>
         <Routes>
