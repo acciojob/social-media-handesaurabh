@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { BrowserRouter as Router, Route, Switch, useHistory, useParams } from 'react-router-dom';
+import { BrowserRouter as Router, Route, Routes, useNavigate, useParams } from 'react-router-dom';
 import '../styles/App.css';
 import { initialUsers, initialPosts } from './data';
 import CreatePost from './CreatePost';
@@ -8,30 +8,34 @@ import UsersPage from './UsersPage';
 import NotificationsPage from './NotificationsPage';
 import PostDetails from './PostDetails';
 
-function Nav({ history }) {
+function Nav() {
+  const navigate = useNavigate();
+  
   return (
     <nav className="nav">
-      <a href="/" onClick={e => { e.preventDefault(); history.push('/'); }}>Posts</a>
-      <a href="/users" onClick={e => { e.preventDefault(); history.push('/users'); }}>Users</a>
-      <a href="/notifications" onClick={e => { e.preventDefault(); history.push('/notifications'); }}>Notifications</a>
+      <a href="/" onClick={e => { e.preventDefault(); navigate('/'); }}>Posts</a>
+      <a href="/users" onClick={e => { e.preventDefault(); navigate('/users'); }}>Users</a>
+      <a href="/notifications" onClick={e => { e.preventDefault(); navigate('/notifications'); }}>Notifications</a>
     </nav>
   );
 }
 
-function PostsPage({ posts, users, onAddPost, onUpdatePost, history }) {
+function PostsPage({ posts, users, onAddPost, onUpdatePost }) {
+  const navigate = useNavigate();
+  
   return (
     <div>
       <CreatePost users={users} onAddPost={onAddPost} />
-      <PostsList posts={posts} users={users} onUpdatePost={onUpdatePost} history={history} />
+      <PostsList posts={posts} users={users} onUpdatePost={onUpdatePost} history={{ push: navigate }} />
     </div>
   );
 }
 
-export default function App() {
-  const history = useHistory();
+function AppContent() {
   const [users] = useState(initialUsers);
   const [posts, setPosts] = useState(initialPosts);
   const [notifications, setNotifications] = useState([]);
+  const navigate = useNavigate();
 
   function addPost(post) {
     setPosts(p => [{ id: 'p' + Date.now(), reactions: [0, 0, 0, 0, 0], ...post }, ...p]);
@@ -49,23 +53,39 @@ export default function App() {
   }
 
   return (
+    <div className="App">
+      <header>
+        <h1>GenZ</h1>
+        <div><Nav /></div>
+      </header>
+      <main>
+        <Routes>
+          <Route 
+            path="/" 
+            element={<PostsPage posts={posts} users={users} onAddPost={addPost} onUpdatePost={updatePost} />} 
+          />
+          <Route 
+            path="/users" 
+            element={<UsersPage users={users} posts={posts} />} 
+          />
+          <Route 
+            path="/notifications" 
+            element={<NotificationsPage notifications={notifications} onRefresh={addNotification} />} 
+          />
+          <Route 
+            path="/posts/:id" 
+            element={<PostDetails posts={posts} users={users} onUpdatePost={updatePost} history={{ push: navigate }} />} 
+          />
+        </Routes>
+      </main>
+    </div>
+  );
+}
+
+export default function App() {
+  return (
     <Router>
-      <div className="App">
-        <header>
-          <h1>GenZ</h1>
-          <div><Nav history={history} /></div>
-        </header>
-        <main>
-          <Switch>
-            <Route exact path="/" render={() => (
-              <PostsPage posts={posts} users={users} onAddPost={addPost} onUpdatePost={updatePost} history={history} />
-            )} />
-            <Route path="/users" render={() => <UsersPage users={users} posts={posts} />} />
-            <Route path="/notifications" render={() => <NotificationsPage notifications={notifications} onRefresh={addNotification} />} />
-            <Route path="/posts/:id" render={() => <PostDetails posts={posts} users={users} onUpdatePost={updatePost} history={history} />} />
-          </Switch>
-        </main>
-      </div>
+      <AppContent />
     </Router>
   );
 }
