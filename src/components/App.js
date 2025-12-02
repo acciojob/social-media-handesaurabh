@@ -56,7 +56,9 @@ function AppContent() {
     <div className="App">
       <header>
         <h1>GenZ</h1>
-        <Nav />
+        <a href="/" onClick={e => { e.preventDefault(); navigate('/'); }}>Posts</a>
+        <a href="/users" onClick={e => { e.preventDefault(); navigate('/users'); }}>Users</a>
+        <a href="/notifications" onClick={e => { e.preventDefault(); navigate('/notifications'); }}>Notifications</a>
       </header>
       <main>
         <Routes>
